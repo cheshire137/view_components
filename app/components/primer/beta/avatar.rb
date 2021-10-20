@@ -20,9 +20,12 @@ module Primer
       status :beta
 
       SMALL_THRESHOLD = 24
+      DEFAULT_SIZE = 20
 
       DEFAULT_SHAPE = :circle
       SHAPE_OPTIONS = [DEFAULT_SHAPE, :square].freeze
+
+      SIZE_OPTIONS = [16, SMALL_THRESHOLD, DEFAULT_SIZE, 24, 32, 40, 48, 80].freeze
 
       # @example Default
       #   <%= render(Primer::Beta::Avatar.new(src: "http://placekitten.com/200/200", alt: "@kittenuser")) %>
@@ -43,17 +46,17 @@ module Primer
       #
       # @param src [String] The source url of the avatar image.
       # @param alt [String] Passed through to alt on img tag.
-      # @param size [Integer] Adds the avatar-small class if less than 24.
+      # @param size [Integer] Adds the avatar-small class if less than 24. <%= one_of(Primer::Beta::Avatar::SIZE_OPTIONS) %>
       # @param shape [Symbol] Shape of the avatar. <%= one_of(Primer::Beta::Avatar::SHAPE_OPTIONS) %>
       # @param href [String] The URL to link to. If used, component will be wrapped by an `<a>` tag.
       # @param system_arguments [Hash] <%= link_to_system_arguments_docs %>
-      def initialize(src:, alt:, size: 20, shape: DEFAULT_SHAPE, href: nil, **system_arguments)
+      def initialize(src:, alt:, size: DEFAULT_SIZE, shape: DEFAULT_SHAPE, href: nil, **system_arguments)
         @href = href
         @system_arguments = system_arguments
         @system_arguments[:tag] = :img
         @system_arguments[:src] = src
         @system_arguments[:alt] = alt
-        @system_arguments[:size] = size
+        @system_arguments[:size] = fetch_or_fallback(SIZE_OPTIONS, size, DEFAULT_SIZE)
         @system_arguments[:height] = size
         @system_arguments[:width] = size
 
